@@ -12,7 +12,8 @@ export default class Layout extends Component{
     this.state  = {
       socket: null,
       user: null
-    }
+    };
+    this.setUser = this.setUser.bind(this);
   }
 
   componentWillMount(){
@@ -23,15 +24,16 @@ export default class Layout extends Component{
     const socket = io(socketUrl);
     socket.on('connect', () => {
       console.log("Connected");
-    })
+    });
+
     this.setState({socket});
   }
 
   /* user property */
   setUser = (user) => {
     const {socket} = this.state;
-    socket.emit(USER_CONNECTED);
-    this.setState({user})
+    this.setState({user});
+    socket.emit(USER_CONNECTED, user);
   }
 
   /* logout */

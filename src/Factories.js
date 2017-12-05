@@ -1,22 +1,22 @@
 const uuidv4 = require('uuid/v4');
 
 /* createUser */
-const createUser = ({name = ""} = {}) => (
+const createUser = ({name}) => (
   {
     id: uuidv4(),
-    name
+    name: name
   }
 );
 
 /* createMessage */
-const createMessage = ({message = "", sender = ""} = { }) => (
-  {
+const createMessage = ({message, sender}) => {
+  return {
     id: uuidv4(),
-    time: getTime(Date.now()),
-    message,
-    sender
+    time: getTime(new Date(Date.now())),
+    message: message,
+    sender: sender
   }
-)
+}
 
 
 /* createChat */
@@ -37,7 +37,7 @@ const getTime = (date) => {
 }
 
 module.exports = {
-  createMessage,
   createChat,
+  createMessage,
   createUser
 }
