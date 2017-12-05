@@ -28,9 +28,16 @@ export default class Layout extends Component{
 
   /* user property */
   setUser = (user) => {
-    const { socket } = this.state;
+    const {socket} = this.state;
     socket.emit(USER_CONNECTED);
     this.setState({user})
+  }
+
+  /* logout */
+  logout = () => {
+    const{socket} = this.state;
+    socket.emit(LOGOUT);
+    this.setState({user: null});
   }
 
   render(){
