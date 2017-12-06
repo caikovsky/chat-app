@@ -7,5 +7,6 @@ Creating a Chat app in ReactJS, using Socket.io and UUID.
 Open terminal/bash
 
 ```
+npm install
 npm start
 ```
