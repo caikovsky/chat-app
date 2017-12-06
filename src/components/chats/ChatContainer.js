@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import SideBar from './SideBar'
 import {COMMUNITY_CHAT, MESSAGE_SENT,
-				MESSAGE_RECEIVED, TYPING } from '../../Events'
+				MESSAGE_RECEIVED, TYPING} from '../../Events'
 import ChatHeading from './ChatHeading'
 import Messages from '../messages/Messages'
 import MessageInput from '../messages/MessageInput'
@@ -27,6 +27,7 @@ export default class ChatContainer extends Component {
 	}
 
 	addChat = (chat, reset)=>{
+		console.log(chat)
 		const {socket} = this.props;
 		const {chats} = this.state;
 		console.log(chats);
@@ -50,6 +51,27 @@ export default class ChatContainer extends Component {
 			})
 
 			this.setState({chats:newChats});
+		}
+	}
+
+	updateTypingInChat = (chatId) =>{
+		return ({isTyping, user})=>{
+			if(user !== this.props.user.name){
+
+				const {chats} = this.state
+
+				let newChats = chats.map((chat)=>{
+					if(chat.id === chatId){
+						if(isTyping && !chat.typingUsers.includes(user)){
+							chat.typingUsers.push(user)
+						}else if(!isTyping && chat.typingUsers.includes(user)){
+							chat.typingUsers = chat.typingUsers.filter(u => u !== user)
+						}
+					}
+					return chat
+				})
+				this.setState({chats:newChats})
+			}
 		}
 	}
 
