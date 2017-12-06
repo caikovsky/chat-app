@@ -1,10 +1,16 @@
 const io = require('./index.js').io;
-const { VERIFY_USER, USER_CONNECTED, LOGOUT } = require('../Events');
+const { VERIFY_USER, USER_CONNECTED,
+        USER_DISCONNECTED, LOGOUT,
+        COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED,
+        TYPING } = require('../Events');
 const { createUser, createMessage, createChat } = require('../Factories')
 
-let connectedUsers = {};
+let connectedUsers = { };
+
+let communityChat = createChat();
 
 module.exports = function(socket){
+  //console.log('\x1bc');
   console.log("Socket ID: " + socket.id);
 
   //Verify username
@@ -17,7 +23,7 @@ module.exports = function(socket){
   })
 
   //user connects with username
-  socket.on(USER_CONNECTED, function(user){
+  socket.on(USER_CONNECTED, (user) => {
     connectedUsers = addUser(connectedUsers, user)
     socket.user = user.name;
 
@@ -26,9 +32,33 @@ module.exports = function(socket){
   })
 
   //user disconnects
-
+  socket.on('disconnect', () => {
+    if("user" in socket){
+      connectedUsers = removeUser(connectedUsers, socket.user.name);
+      io.emit(USER_DISCONNECTED, connectedUsers);
+      console.log("Disconnect", connectedUsers);
+    }
+  })
 
   //user logouts
+  socket.on(LOGOUT, () => {
+    connectedUsers = removeUser(connectedUsers, socket.user.name);
+    io.emit(USER_DISCONNECTED, connectedUsers);
+    console.log("Disconnect", connectedUsers);
+  })
+
+  //get community chat
+  socket.on(COMMUNITY_CHAT, (callback) => {
+		callback(communityChat)
+	})
+
+	socket.on(MESSAGE_SENT, ({chatId, message})=>{
+		sendMessageToChatFromUser(chatId, message)
+	})
+
+	socket.on(TYPING, ({chatId, isTyping})=>{
+		sendTypingFromUser(chatId, isTyping)
+	})
 }
 
 //add user to the list
@@ -40,9 +70,9 @@ function addUser(userList, user){
 
 //remove user from the list
 function removeUser(userList, username){
-  let newList = Object.assign({}, userList)
-  delete newList[username]
-  return newList
+  let newList = Object.assign({}, userList);
+  delete newList[username];
+  return newList;
 }
 
 //checks if the user is in the list
