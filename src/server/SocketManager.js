@@ -3,7 +3,7 @@ const { VERIFY_USER, USER_CONNECTED,
         USER_DISCONNECTED, LOGOUT,
         COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED,
         TYPING } = require('../Events');
-const { createUser, createMessage, createChat } = require('../Factories')
+const {createUser, createMessage, createChat} = require('../Factories')
 
 let connectedUsers = {};
 let communityChat = createChat();
@@ -54,14 +54,18 @@ module.exports = function(socket){
 		callback(communityChat)
 	});
 
+  //send message
 	socket.on(MESSAGE_SENT, ({chatId, message}) => {
 		sendMessageToChatFromUser(chatId, message)
 	});
 
+  //send typing
 	socket.on(TYPING, ({chatId, isTyping}) => {
 		sendTypingFromUser(chatId, isTyping)
 	});
 }
+// -------------------------
+
 
 sendTypingToChat = (user) => {
   return (chatId, isTyping) => {
