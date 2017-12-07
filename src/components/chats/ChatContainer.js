@@ -54,38 +54,37 @@ export default class ChatContainer extends Component {
 		}
 	}
 
-	updateTypingInChat = (chatId) =>{
-		return ({isTyping, user})=>{
+	updateTypingInChat = (chatId) => {
+		return ({isTyping, user}) => {
 			if(user !== this.props.user.name){
-
 				const {chats} = this.state
 
-				let newChats = chats.map((chat)=>{
+				let newChats = chats.map((chat) => {
 					if(chat.id === chatId){
-						if(isTyping && !chat.typingUsers.includes(user)){
-							chat.typingUsers.push(user)
-						}else if(!isTyping && chat.typingUsers.includes(user)){
+						if(isTyping && !chat.typingUsers.includes(user)){ //typing and not in the typingUser array
+							chat.typingUsers.push(user);
+						}else if(!isTyping && chat.typingUsers.includes(user)){ //not typing and in the typingUser array
 							chat.typingUsers = chat.typingUsers.filter(u => u !== user)
 						}
 					}
-					return chat
+					return chat;
 				})
 				this.setState({chats:newChats})
 			}
 		}
 	}
 
-	sendMessage = (chatId, message)=>{
+	sendMessage = (chatId, message) => {
 		const {socket} = this.props
 		socket.emit(MESSAGE_SENT, {chatId, message});
 	}
-	
-	sendTyping = (chatId, isTyping)=>{
+
+	sendTyping = (chatId, isTyping) => {
 		const {socket} = this.props
 		socket.emit(TYPING, {chatId, isTyping});
 	}
 
-	setActiveChat = (activeChat)=>{
+	setActiveChat = (activeChat) => {
 		this.setState({activeChat});
 	}
 
