@@ -6,14 +6,13 @@ import ChatHeading from './ChatHeading'
 import Messages from '../messages/Messages'
 import MessageInput from '../messages/MessageInput'
 
-
 export default class ChatContainer extends Component {
 	constructor(props) {
 	  super(props);
 
 	  this.state = {
-	  	chats:[],
-	  	activeChat:null
+	  	chats: [],
+	  	activeChat: null
 	  };
 	}
 
@@ -27,10 +26,9 @@ export default class ChatContainer extends Component {
 	}
 
 	addChat = (chat, reset)=>{
-		console.log(chat)
 		const {socket} = this.props;
 		const {chats} = this.state;
-		console.log(chats);
+
 		const newChats = reset ? [chat] : [...chats, chat];
 		this.setState({chats:newChats, activeChat:reset ? chat : this.state.activeChat})
 
@@ -44,12 +42,12 @@ export default class ChatContainer extends Component {
 	addMessageToChat = (chatId) => {
 		return message => {
 			const {chats} = this.state
-			let newChats = chats.map((chat)=>{
-				if(chat.id === chatId)
-					chat.messages.push(message)
-				return chat
+			let newChats = chats.map((chat) => {
+				if(chat.id === chatId){
+					chat.messages.push(message);
+				}
+				return chat;
 			})
-
 			this.setState({chats:newChats});
 		}
 	}
@@ -57,14 +55,14 @@ export default class ChatContainer extends Component {
 	updateTypingInChat = (chatId) => {
 		return ({isTyping, user}) => {
 			if(user !== this.props.user.name){
-				const {chats} = this.state
+				const {chats} = this.state;
 
 				let newChats = chats.map((chat) => {
 					if(chat.id === chatId){
 						if(isTyping && !chat.typingUsers.includes(user)){ //typing and not in the typingUser array
 							chat.typingUsers.push(user);
 						}else if(!isTyping && chat.typingUsers.includes(user)){ //not typing and in the typingUser array
-							chat.typingUsers = chat.typingUsers.filter(u => u !== user)
+							chat.typingUsers = chat.typingUsers.filter(u => u !== user);
 						}
 					}
 					return chat;
@@ -75,7 +73,7 @@ export default class ChatContainer extends Component {
 	}
 
 	sendMessage = (chatId, message) => {
-		const {socket} = this.props
+		const {socket} = this.props;
 		socket.emit(MESSAGE_SENT, {chatId, message});
 	}
 
@@ -89,8 +87,8 @@ export default class ChatContainer extends Component {
 	}
 
 	render() {
-		const { user, logout } = this.props
-		const { chats, activeChat } = this.state
+		const {user, logout} = this.props
+		const {chats, activeChat} = this.state
 		return (
 			<div className="container">
 				<SideBar

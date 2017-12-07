@@ -23,11 +23,10 @@ export default class Messages extends Component {
   render() {
 		const {messages, user, typingUsers} = this.props;
 		return (
-			<div ref='container'
-				className="thread-container">
+			<div ref='container' className="thread-container">
 				<div className="thread">
 					{
-						messages.map((mes)=>{
+						messages.map((mes) => {
 							return (
 								<div
 									key={mes.id}
@@ -43,7 +42,7 @@ export default class Messages extends Component {
 						})
 					}
 					{
-						typingUsers.map((name)=>{
+						typingUsers.map((name) => {
 							return (
 								<div key={name} className="typing-user">
 									{`${name} is typing...`}
