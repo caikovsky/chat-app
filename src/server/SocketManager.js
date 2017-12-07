@@ -13,6 +13,8 @@ module.exports = function(socket){
   //console.log('\x1bc');
   console.log("Socket ID: " + socket.id);
 
+  let sendMessageToChatFromUser;
+
   //Verify username
   socket.on(VERIFY_USER, (newUser, callback) => {
     if(!isUser(connectedUsers, newUser)){
@@ -26,6 +28,8 @@ module.exports = function(socket){
   socket.on(USER_CONNECTED, (user) => {
     connectedUsers = addUser(connectedUsers, user)
     socket.user = user.name;
+
+    sendMessageToChatFromUser = sendMessageToChat(user.name);
 
     console.log(connectedUsers);
     io.emit(USER_CONNECTED, connectedUsers)
@@ -59,6 +63,17 @@ module.exports = function(socket){
 	socket.on(TYPING, ({chatId, isTyping})=>{
 		sendTypingFromUser(chatId, isTyping)
 	})
+
+  socket.on(MESSAGE_SENT, ({chatId, message}) => {
+    sendMessageToChatFromUser(chatId, message);
+  })
+}
+
+
+sendMessageToChat = (sender) => {
+  return (chatId, message) => {
+    io.emit(`${MESSAGE_RECEIVED}-${chatId}`, createMessage({message, sender}));
+  }
 }
 
 //add user to the list

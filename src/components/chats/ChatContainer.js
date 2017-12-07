@@ -41,7 +41,7 @@ export default class ChatContainer extends Component {
 		socket.on(messageEvent, this.addMessageToChat(chat.id));
 	}
 
-	addMessageToChat = (chatId)=>{
+	addMessageToChat = (chatId) => {
 		return message => {
 			const {chats} = this.state
 			let newChats = chats.map((chat)=>{
@@ -79,7 +79,7 @@ export default class ChatContainer extends Component {
 		const {socket} = this.props
 		socket.emit(MESSAGE_SENT, {chatId, message});
 	}
-
+	
 	sendTyping = (chatId, isTyping)=>{
 		const {socket} = this.props
 		socket.emit(TYPING, {chatId, isTyping});
