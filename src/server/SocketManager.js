@@ -5,8 +5,7 @@ const { VERIFY_USER, USER_CONNECTED,
         TYPING } = require('../Events');
 const { createUser, createMessage, createChat } = require('../Factories')
 
-let connectedUsers = { };
-
+let connectedUsers = {};
 let communityChat = createChat();
 
 module.exports = function(socket){
@@ -16,7 +15,7 @@ module.exports = function(socket){
   let sendMessageToChatFromUser;
   let sendTypingFromUser;
 
-  //Verify username
+  //verify username
   socket.on(VERIFY_USER, (newUser, callback) => {
     if(!isUser(connectedUsers, newUser)){
       callback({isUser: false, user: createUser({name: newUser})});
@@ -27,53 +26,46 @@ module.exports = function(socket){
 
   //user connects with username
   socket.on(USER_CONNECTED, (user) => {
-    connectedUsers = addUser(connectedUsers, user)
+    connectedUsers = addUser(connectedUsers, user);
     socket.user = user.name;
 
     sendMessageToChatFromUser = sendMessageToChat(user.name);
     sendTypingFromUser = sendTypingToChat(user.name);
 
-    console.log(connectedUsers);
     io.emit(USER_CONNECTED, connectedUsers)
-  })
+  });
 
   //user disconnects
   socket.on('disconnect', () => {
     if("user" in socket){
       connectedUsers = removeUser(connectedUsers, socket.user.name);
       io.emit(USER_DISCONNECTED, connectedUsers);
-      console.log("Disconnect", connectedUsers);
     }
-  })
+  });
 
   //user logouts
   socket.on(LOGOUT, () => {
     connectedUsers = removeUser(connectedUsers, socket.user.name);
     io.emit(USER_DISCONNECTED, connectedUsers);
-    console.log("Disconnect", connectedUsers);
-  })
+  });
 
   //get community chat
   socket.on(COMMUNITY_CHAT, (callback) => {
 		callback(communityChat)
-	})
+	});
 
 	socket.on(MESSAGE_SENT, ({chatId, message}) => {
 		sendMessageToChatFromUser(chatId, message)
-	})
+	});
 
 	socket.on(TYPING, ({chatId, isTyping}) => {
 		sendTypingFromUser(chatId, isTyping)
-	})
-
-  socket.on(MESSAGE_SENT, ({chatId, message}) => {
-    sendMessageToChatFromUser(chatId, message);
-  })
+	});
 }
 
 sendTypingToChat = (user) => {
   return (chatId, isTyping) => {
-    io.emit(`${TYPING}-${chatId}, {user, isTyping}`);
+    io.emit(`${TYPING}-${chatId}`, {user, isTyping});
   }
 }
 
