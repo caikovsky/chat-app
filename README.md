@@ -1,2 +1,10 @@
-## Branch
-Using this branch to develop the messaging part of the app, so it doesn't interfere with the _master_
+## Chat App
+Creating a Chat app in ReactJS, using Socket.io and UUID.
+
+## How to
+Open terminal/bash
+
+```
+npm install
+npm start
+```
