@@ -14,6 +14,7 @@ module.exports = function(socket){
   console.log("Socket ID: " + socket.id);
 
   let sendMessageToChatFromUser;
+  let sendTypingFromUser;
 
   //Verify username
   socket.on(VERIFY_USER, (newUser, callback) => {
@@ -30,6 +31,7 @@ module.exports = function(socket){
     socket.user = user.name;
 
     sendMessageToChatFromUser = sendMessageToChat(user.name);
+    sendTypingFromUser = sendTypingToChat(user.name);
 
     console.log(connectedUsers);
     io.emit(USER_CONNECTED, connectedUsers)
@@ -56,11 +58,11 @@ module.exports = function(socket){
 		callback(communityChat)
 	})
 
-	socket.on(MESSAGE_SENT, ({chatId, message})=>{
+	socket.on(MESSAGE_SENT, ({chatId, message}) => {
 		sendMessageToChatFromUser(chatId, message)
 	})
 
-	socket.on(TYPING, ({chatId, isTyping})=>{
+	socket.on(TYPING, ({chatId, isTyping}) => {
 		sendTypingFromUser(chatId, isTyping)
 	})
 
@@ -69,6 +71,11 @@ module.exports = function(socket){
   })
 }
 
+sendTypingToChat = (user) => {
+  return (chatId, isTyping) => {
+    io.emit(`${TYPING}-${chatId}, {user, isTyping}`);
+  }
+}
 
 sendMessageToChat = (sender) => {
   return (chatId, message) => {
