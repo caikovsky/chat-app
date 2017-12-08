@@ -57,7 +57,7 @@ export default class LoginForm extends Component {
             id="nickname"
             value={nickname}
             onChange={this.handleChange}
-            palceholder={'myAwesomeUsername'}
+            placeholder={'myAwesomeUsername'}
           />
 
           <div className="error">{error ? error: ""}</div>
