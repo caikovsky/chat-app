@@ -2,7 +2,7 @@ const io = require('./index.js').io;
 const { VERIFY_USER, USER_CONNECTED,
         USER_DISCONNECTED, LOGOUT,
         COMMUNITY_CHAT, MESSAGE_SENT, MESSAGE_RECEIVED,
-        TYPING } = require('../Events');
+        TYPING, PRIVATE_MESSAGE } = require('../Events');
 const {createUser, createMessage, createChat} = require('../Factories')
 
 let connectedUsers = {};
@@ -18,7 +18,7 @@ module.exports = function(socket){
   //verify username
   socket.on(VERIFY_USER, (newUser, callback) => {
     if(!isUser(connectedUsers, newUser)){
-      callback({isUser: false, user: createUser({name: newUser})});
+      callback({isUser: false, user: createUser({name: newUser, socketId: socket.id})});
     }else{
       callback({isUser: true});
     }
@@ -26,6 +26,7 @@ module.exports = function(socket){
 
   //user connects with username
   socket.on(USER_CONNECTED, (user) => {
+    user.socketId = socket.id;
     connectedUsers = addUser(connectedUsers, user);
     socket.user = user.name;
 
@@ -43,7 +44,7 @@ module.exports = function(socket){
     }
   });
 
-  //user logouts
+  //user logout
   socket.on(LOGOUT, () => {
     connectedUsers = removeUser(connectedUsers, socket.user.name);
     io.emit(USER_DISCONNECTED, connectedUsers);
@@ -63,9 +64,22 @@ module.exports = function(socket){
 	socket.on(TYPING, ({chatId, isTyping}) => {
 		sendTypingFromUser(chatId, isTyping)
 	});
-}
-// -------------------------
 
+  socket.on(PRIVATE_MESSAGE, ({receiver, sender, activeChat}) => {
+    if(receiver in connectedUsers){
+      const receiverSocket = connectedUsers[receiver].socketId;
+      if(activeChat === null || activeChat.id === communityChat.id){
+        const newChat = createChat({name: `${receiver} & ${sender}`, users:[receiver, sender]})
+        socket.to(receiverSocket).emit(PRIVATE_MESSAGE, newChat);
+        socket.emit(PRIVATE_MESSAGE, newChat);
+      }else{
+        socket.to(receiverSocket).emit(PRIVATE_MESSAGE, activeChat);
+      }
+    }
+  })
+}
+
+// -------------------------
 
 sendTypingToChat = (user) => {
   return (chatId, isTyping) => {
