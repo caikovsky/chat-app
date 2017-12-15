@@ -22,12 +22,12 @@ export default class ChatContainer extends Component {
 	}
 
 	initSocket(socket){
-		const {user} = this.props;
+		//const {user} = this.props;
 		socket.emit(COMMUNITY_CHAT, this.resetChat);
 		socket.on(PRIVATE_MESSAGE, this.addChat);
-		socket.on('connect'), () => {
+		socket.on(('connect'), () => {
 			socket.emit(COMMUNITY_CHAT, this.resetChat);
-		}
+		})
 	}
 
 	sendOpenPrivateMessage = (receiver) => {

@@ -8,5 +8,5 @@ const SocketManager = require('./SocketManager');
 io.on('connection', SocketManager);
 
 app.listen(PORT, () => {
-  console.log("listening on *:" + PORT);
+  console.log("listening to port: " + PORT);
 });
