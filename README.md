@@ -2,7 +2,7 @@ React.JS Chat
 ============
 This is a react.js chat application powered by Socket.io that provides the basic functions you'd expect from a chat, such as a chat room, messaging, typing and event indicators.
 
-![Chat Preview](https://imgur.com/775IsiO)
+![Chat Preview](https://i.imgur.com/775IsiO.png)
 
 ---
 
