@@ -1,7 +1,3 @@
-## Chat App
-Creating a Chat app in ReactJS, using Socket.io and UUID.
-
-
 React.JS Chat
 ============
 This is a react.js chat application powered by Socket.io that provides the basic functions you'd expect from a chat, such as a chat room, messaging, typing and event indicators.
