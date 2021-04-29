@@ -1,7 +1,12 @@
 var app = require('http').createServer();
-var io = module.exports.io = require('socket.io')(app);
-
 const PORT = process.env.PORT || 3231;
+var io = module.exports.io = require('socket.io')(app, {
+  cors: {
+    origin: `http://localhost:${PORT}`,
+    methods: ["GET", "POST"]
+  }
+});
+
 
 const SocketManager = require('./SocketManager');
 
